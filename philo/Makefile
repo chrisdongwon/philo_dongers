@@ -6,7 +6,7 @@
 #    By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/06 09:42:54 by cwon              #+#    #+#              #
-#    Updated: 2025/04/09 12:26:21 by cwon             ###   ########.fr        #
+#    Updated: 2025/04/09 12:35:41 by cwon             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ NAME = philo
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+# for race condition checking
 # CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
 
 HEADER = philo.h
