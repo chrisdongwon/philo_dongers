@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 10:35:45 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/09 12:20:17 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/10 14:02:39 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,21 @@ bool	grab_fork(t_philo *philo, int fork_number)
 		return (false);
 	quit = table->stop;
 	if (!safe_mutex_unlock(&table->lock) || quit || \
-		!safe_mutex_lock(&table->fork[fork_number]) || \
-		!get_timestamp_ms(&timestamp, 0))
+		!safe_mutex_lock(&table->fork[fork_number]))
 		return (false);
+	if (!get_timestamp_ms(&timestamp, 0))
+	{
+		safe_mutex_unlock(&table->fork[fork_number]);
+		return (false);
+	}
+	if (!safe_mutex_lock(&table->lock))
+		return (false);
+	quit = table->stop;
+	if (!safe_mutex_unlock(&table->lock) || quit)
+	{
+		safe_mutex_unlock(&table->fork[fork_number]);
+		return (false);
+	}
 	printf("%lld %d has picked up a fork\n", timestamp, philo->id + 1);
 	return (true);
 }
