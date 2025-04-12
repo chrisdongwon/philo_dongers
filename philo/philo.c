@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 10:29:48 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/10 13:31:20 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/12 17:54:48 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,8 @@ static bool	join_threads(t_table *table)
 	i = 0;
 	while (i < table->size)
 	{
-		if (!safe_thread_join(table->philo[i].thread))
+		if (!safe_thread_join(table->philo[i++].thread))
 			return (false);
-		i++;
 	}
 	return (safe_thread_join(table->watchdog));
 }
@@ -35,8 +34,9 @@ static int	flush(t_table *table, bool flush_mutex, int exit_status)
 		i = 0;
 		while (i < table->size)
 			safe_mutex_destroy(&table->fork[i++]);
-		safe_mutex_destroy(&table->lock);
+		safe_mutex_destroy(&table->lastmeal_lock);
 		safe_mutex_destroy(&table->mealcount_lock);
+		safe_mutex_destroy(&table->stop_lock);
 	}
 	free(table->fork);
 	free(table->philo);

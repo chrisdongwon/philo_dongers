@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 10:24:45 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/10 13:59:28 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/12 18:51:07 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ typedef void *(t_routine)(void *);
 struct s_philo
 {
 	int			id;
-	int			meal_count;
+	int			mealcount;
 	pthread_t	thread;
 	t_table		*table;
-	t_time		last_meal;
+	t_time		lastmeal;
 };
 
 struct s_table
@@ -48,8 +48,9 @@ struct s_table
 	int			sleep_time;
 	pthread_t	watchdog;
 	t_mutex		*fork;
-	t_mutex		lock;
+	t_mutex		lastmeal_lock;
 	t_mutex		mealcount_lock;
+	t_mutex		stop_lock;
 	t_philo		*philo;
 };
 
@@ -74,8 +75,9 @@ int		philosophers(int argc, char **argv);
 
 // routine_util.c
 bool	grab_fork(t_philo *philo, int fork_number);
+bool	mealcount_check(t_philo *philo);
 bool	release_forks(t_philo *philo);
-bool	update_mealcount(t_philo *philo);
+bool	release_forks_quit(t_philo *philo);
 void	choose_forks(t_philo *philo, int *first, int *second);
 
 // routine.c
@@ -86,12 +88,13 @@ bool	safe_thread_create(pthread_t *thread, t_routine routine, void *arg);
 bool	safe_thread_join(pthread_t thread);
 
 // time.c
-bool	get_timestamp_ms(t_llong *timestamp, t_philo *philo);
+bool	get_timestamp(t_llong *timestamp, t_philo *philo);
 bool	safe_gettimeofday(t_time *tv);
-bool	safe_usleep(int msec);
-long	time_diff_ms(t_time *start, t_time *end);
+bool	safe_usleep(int ms);
+long	time_diff(t_time *start, t_time *end);
 
 // watchdog.c
+void	*terminate(t_table *table, int i, bool is_dead);
 void	*watchdog_routine(void *arg);
 
 #endif

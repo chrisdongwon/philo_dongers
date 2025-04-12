@@ -6,11 +6,29 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 10:45:27 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/09 11:49:36 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/12 17:54:32 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static bool	init_locks(t_table *table)
+{
+	if (!safe_mutex_init(&table->lastmeal_lock))
+		return (false);
+	if (!safe_mutex_init(&table->mealcount_lock))
+	{
+		safe_mutex_destroy(&table->lastmeal_lock);
+		return (false);
+	}
+	if (!safe_mutex_init(&table->stop_lock))
+	{
+		safe_mutex_destroy(&table->lastmeal_lock);
+		safe_mutex_destroy(&table->mealcount_lock);
+		return (false);
+	}
+	return (true);
+}
 
 static void	argv_to_table(int argc, char **argv, t_table *table)
 {
@@ -27,13 +45,8 @@ bool	init_mutex(t_table *table)
 {
 	int	i;
 
-	if (!safe_mutex_init(&table->lock))
+	if (!init_locks(table))
 		return (false);
-	if (!safe_mutex_init(&table->mealcount_lock))
-	{
-		safe_mutex_destroy(&table->lock);
-		return (false);
-	}
 	i = 0;
 	while (i < table->size)
 	{
@@ -41,8 +54,9 @@ bool	init_mutex(t_table *table)
 		{
 			while (--i >= 0)
 				safe_mutex_destroy(&table->fork[i]);
-			safe_mutex_destroy(&table->lock);
+			safe_mutex_destroy(&table->lastmeal_lock);
 			safe_mutex_destroy(&table->mealcount_lock);
+			safe_mutex_destroy(&table->stop_lock);
 			return (false);
 		}
 		i++;
@@ -70,11 +84,10 @@ bool	init_philo(t_table *table)
 	while (i < table->size)
 	{
 		table->philo[i].id = i;
-		table->philo[i].meal_count = 0;
+		table->philo[i].mealcount = 0;
 		table->philo[i].table = table;
-		if (!safe_gettimeofday(&table->philo[i].last_meal) || \
-			!safe_thread_create(&table->philo[i].thread, philo_routine, \
-			&table->philo[i]))
+		if (!safe_thread_create(&table->philo[i].thread, philo_routine, \
+			&table->philo[i]) || !safe_gettimeofday(&table->philo[i].lastmeal))
 			return (false);
 		i++;
 	}
