@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 10:45:27 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/12 17:54:32 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/22 23:06:11 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 
 static bool	init_locks(t_table *table)
 {
-	if (!safe_mutex_init(&table->lastmeal_lock))
+	if (!safe_mutex_init(&table->lastmeal_lock, "init_locks"))
 		return (false);
-	if (!safe_mutex_init(&table->mealcount_lock))
+	if (!safe_mutex_init(&table->mealcount_lock, "init_locks"))
 	{
-		safe_mutex_destroy(&table->lastmeal_lock);
+		safe_mutex_destroy(&table->lastmeal_lock, "init_locks");
 		return (false);
 	}
-	if (!safe_mutex_init(&table->stop_lock))
+	if (!safe_mutex_init(&table->stop_lock, "init_locks"))
 	{
-		safe_mutex_destroy(&table->lastmeal_lock);
-		safe_mutex_destroy(&table->mealcount_lock);
+		safe_mutex_destroy(&table->lastmeal_lock, "init_locks");
+		safe_mutex_destroy(&table->mealcount_lock, "init_locks");
 		return (false);
 	}
 	return (true);
@@ -50,13 +50,13 @@ bool	init_mutex(t_table *table)
 	i = 0;
 	while (i < table->size)
 	{
-		if (!safe_mutex_init(&table->fork[i]))
+		if (!safe_mutex_init(&table->fork[i], "init_mutex"))
 		{
 			while (--i >= 0)
-				safe_mutex_destroy(&table->fork[i]);
-			safe_mutex_destroy(&table->lastmeal_lock);
-			safe_mutex_destroy(&table->mealcount_lock);
-			safe_mutex_destroy(&table->stop_lock);
+				safe_mutex_destroy(&table->fork[i], "init_mutex");
+			safe_mutex_destroy(&table->lastmeal_lock, "init_mutex");
+			safe_mutex_destroy(&table->mealcount_lock, "init_mutex");
+			safe_mutex_destroy(&table->stop_lock, "init_mutex");
 			return (false);
 		}
 		i++;
@@ -72,7 +72,7 @@ bool	init_param(int argc, char **argv, t_table *table)
 	table->fork = (t_mutex *)malloc(table->size * sizeof(t_mutex));
 	table->philo = (t_philo *)malloc(table->size * sizeof(t_philo));
 	if (!table->fork || !table->philo)
-		return (error("malloc"));
+		return (error("malloc", "init_param"));
 	return (true);
 }
 
@@ -87,9 +87,11 @@ bool	init_philo(t_table *table)
 		table->philo[i].mealcount = 0;
 		table->philo[i].table = table;
 		if (!safe_thread_create(&table->philo[i].thread, philo_routine, \
-			&table->philo[i]) || !safe_gettimeofday(&table->philo[i].lastmeal))
+			&table->philo[i], "init_philo") || \
+			!safe_gettimeofday(&table->philo[i].lastmeal, "init_philo"))
 			return (false);
 		i++;
 	}
-	return (safe_thread_create(&table->watchdog, watchdog_routine, table));
+	return (safe_thread_create(&table->watchdog, watchdog_routine, table, \
+			"init_philo"));
 }

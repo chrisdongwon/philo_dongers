@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 12:33:14 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/12 18:30:23 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/22 23:28:41 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,36 +20,38 @@ bool	get_timestamp(t_llong *timestamp, t_philo *philo)
 	if (philo)
 	{
 		table = philo->table;
-		if (!safe_mutex_lock(&table->lastmeal_lock))
+		if (!safe_mutex_lock(&table->lastmeal_lock, "get_timestamp"))
 			return (false);
-		if (!safe_gettimeofday(&philo->lastmeal))
+		if (!safe_gettimeofday(&philo->lastmeal, "get_timestamp"))
 		{
-			safe_mutex_unlock(&table->lastmeal_lock);
+			safe_mutex_unlock(&table->lastmeal_lock, "get_timestamp");
 			return (false);
 		}
-		if (!safe_mutex_unlock(&table->lastmeal_lock))
+		*timestamp = (philo->lastmeal.tv_sec * 1000LL) + \
+					(philo->lastmeal.tv_usec / 1000);
+		if (!safe_mutex_unlock(&table->lastmeal_lock, "get_timestamp"))
 			return (false);
 	}
 	else
 	{
-		if (!safe_gettimeofday(&tv))
+		if (!safe_gettimeofday(&tv, "get_timestamp"))
 			return (false);
 		*timestamp = (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000);
 	}
 	return (true);
 }
 
-bool	safe_gettimeofday(t_time *tv)
+bool	safe_gettimeofday(t_time *tv, const char *context)
 {
 	if (gettimeofday(tv, 0))
-		return (error("gettimeofday"));
+		return (error("gettimeofday", context));
 	return (true);
 }
 
-bool	safe_usleep(int ms)
+bool	safe_usleep(int ms, const char *context)
 {
 	if (usleep(ms * 1000))
-		return (error("usleep"));
+		return (error("usleep", context));
 	return (true);
 }
 

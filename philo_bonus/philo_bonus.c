@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/06 10:00:09 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/20 15:36:03 by cwon             ###   ########.fr       */
+/*   Created: 2025/04/17 17:19:31 by cwon              #+#    #+#             */
+/*   Updated: 2025/04/22 22:44:58 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-int	main(int argc, char **argv)
+int	philosophers(int argc, char **argv)
 {
-	if (valid_args(argc, argv))
-		return (philosophers(argc, argv));
-	else
-	{
-		printf("usage: %s <number_of_philosophers> <time_to_die> \
-<time_to_eat> <time_to_sleep> [number_of_times_philosophers_must_eat]\n", \
-argv[0]);
+	t_table	table;
+
+	if (!init_table(argc, argv, &table))
 		return (EXIT_FAILURE);
-	}
+	if (!init_sem(&table))
+		return (flush(&table, false, EXIT_FAILURE));
+	printf("good so far\n");
+	return (flush(&table, true, EXIT_SUCCESS));
 }

@@ -6,32 +6,28 @@
 #    By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/06 09:42:54 by cwon              #+#    #+#              #
-#    Updated: 2025/04/10 13:08:10 by cwon             ###   ########.fr        #
+#    Updated: 2025/04/22 22:45:59 by cwon             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philo
+NAME = philo_bonus
 
 CC = cc
-# CFLAGS = -Wall -Wextra -Werror
-# for race condition checking
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+CFLAGS = -Wall -Wextra -Werror
 
-HEADER = philo.h
+HEADER = philo_bonus.h
 SRC = \
-	init.c \
-	mutex.c \
-	parse.c \
-	philo.c \
-	routine_util.c \
-	routine.c \
-	thread.c \
-	time.c \
-	watchdog.c
-MAIN = main.c
+	flush_bonus.c \
+	init_bonus.c \
+	parse_bonus.c \
+	philo_bonus.c \
+	semaphore_bonus.c
+MAIN = main_bonus.c
 OBJ = $(SRC:.c=.o) $(MAIN:.c=.o)
 
 all: $(NAME)
+
+bonus: all
 
 $(NAME): $(OBJ) $(HEADER)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
@@ -47,4 +43,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus

@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 10:24:45 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/12 18:51:07 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/22 23:03:37 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,17 @@ bool	init_param(int argc, char **argv, t_table *table);
 bool	init_philo(t_table *table);
 
 // mutex.c
-bool	safe_mutex_destroy(t_mutex *mutex);
-bool	safe_mutex_init(t_mutex *mutex);
-bool	safe_mutex_lock(t_mutex *mutex);
-bool	safe_mutex_unlock(t_mutex *mutex);
+bool	safe_mutex_destroy(t_mutex *mutex, const char *context);
+bool	safe_mutex_init(t_mutex *mutex, const char *context);
+bool	safe_mutex_lock(t_mutex *mutex, const char *context);
+bool	safe_mutex_unlock(t_mutex *mutex, const char *context);
 
 // parse.c
 bool	valid_args(int argc, char **argv);
 int		ascii_to_nonneg_int(const char *nptr);
 
 // philo.c
-bool	error(const char *str);
+bool	error(const char *fn_name, const char *context);
 int		philosophers(int argc, char **argv);
 
 // routine_util.c
@@ -84,13 +84,14 @@ void	choose_forks(t_philo *philo, int *first, int *second);
 void	*philo_routine(void *arg);
 
 // thread.c
-bool	safe_thread_create(pthread_t *thread, t_routine routine, void *arg);
-bool	safe_thread_join(pthread_t thread);
+bool	safe_thread_create(pthread_t *thread, t_routine routine, void *arg, \
+							const char *context);
+bool	safe_thread_join(pthread_t thread, const char *context);
 
 // time.c
 bool	get_timestamp(t_llong *timestamp, t_philo *philo);
-bool	safe_gettimeofday(t_time *tv);
-bool	safe_usleep(int ms);
+bool	safe_gettimeofday(t_time *tv, const char *context);
+bool	safe_usleep(int ms, const char *context);
 long	time_diff(t_time *start, t_time *end);
 
 // watchdog.c

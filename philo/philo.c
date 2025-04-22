@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 10:29:48 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/12 17:54:48 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/22 23:07:06 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ static bool	join_threads(t_table *table)
 	i = 0;
 	while (i < table->size)
 	{
-		if (!safe_thread_join(table->philo[i++].thread))
+		if (!safe_thread_join(table->philo[i++].thread, "join_threads"))
 			return (false);
 	}
-	return (safe_thread_join(table->watchdog));
+	return (safe_thread_join(table->watchdog, "join_threads"));
 }
 
 static int	flush(t_table *table, bool flush_mutex, int exit_status)
@@ -33,20 +33,20 @@ static int	flush(t_table *table, bool flush_mutex, int exit_status)
 	{
 		i = 0;
 		while (i < table->size)
-			safe_mutex_destroy(&table->fork[i++]);
-		safe_mutex_destroy(&table->lastmeal_lock);
-		safe_mutex_destroy(&table->mealcount_lock);
-		safe_mutex_destroy(&table->stop_lock);
+			safe_mutex_destroy(&table->fork[i++], "flush");
+		safe_mutex_destroy(&table->lastmeal_lock, "flush");
+		safe_mutex_destroy(&table->mealcount_lock, "flush");
+		safe_mutex_destroy(&table->stop_lock, "flush");
 	}
 	free(table->fork);
 	free(table->philo);
 	return (exit_status);
 }
 
-bool	error(const char *str)
+bool	error(const char *fn_name, const char *context)
 {
 	printf("errno: %d\n", errno);
-	printf("error: %s failed\n", str);
+	printf("error: %s (from %s) failed\n", fn_name, context);
 	return (false);
 }
 

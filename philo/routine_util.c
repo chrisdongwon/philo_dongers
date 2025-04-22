@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 10:35:45 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/12 18:58:04 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/22 22:57:08 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,23 @@ bool	grab_fork(t_philo *philo, int fork_number)
 	t_table	*table;
 
 	table = philo->table;
-	if (!safe_mutex_lock(&table->fork[fork_number]) || \
+	if (!safe_mutex_lock(&table->fork[fork_number], "grab_fork") || \
 		!get_timestamp(&timestamp, 0))
 		return (false);
-	if (!safe_mutex_lock(&table->stop_lock))
+	if (!safe_mutex_lock(&table->stop_lock, "grab_fork"))
 	{
-		safe_mutex_unlock(&table->fork[fork_number]);
+		safe_mutex_unlock(&table->fork[fork_number], "grab_fork");
 		return (false);
 	}
 	if (table->stop)
 	{
-		safe_mutex_unlock(&table->stop_lock);
-		safe_mutex_unlock(&table->fork[fork_number]);
+		safe_mutex_unlock(&table->stop_lock, "grab_fork");
+		safe_mutex_unlock(&table->fork[fork_number], "grab_fork");
 		return (false);
 	}
-	if (!safe_mutex_unlock(&table->stop_lock))
+	if (!safe_mutex_unlock(&table->stop_lock, "grab_fork"))
 	{
-		safe_mutex_unlock(&table->fork[fork_number]);
+		safe_mutex_unlock(&table->fork[fork_number], "grab_fork");
 		return (false);
 	}
 	printf("%lld %d has picked up a fork\n", timestamp, philo->id + 1);
@@ -47,13 +47,13 @@ bool	mealcount_check(t_philo *philo)
 
 	table = philo->table;
 	philo->mealcount++;
-	if (!safe_mutex_lock(&table->mealcount_lock))
+	if (!safe_mutex_lock(&table->mealcount_lock, "mealcount_check"))
 		return (false);
 	if (philo->mealcount == table->min_meals)
 		table->min_reached++;
 	if (table->min_reached == table->size)
 		terminate(table, philo->id, false);
-	return (safe_mutex_unlock(&table->mealcount_lock));
+	return (safe_mutex_unlock(&table->mealcount_lock, "mealcount_check"));
 }
 
 bool	release_forks(t_philo *philo)
@@ -64,8 +64,8 @@ bool	release_forks(t_philo *philo)
 
 	table = philo->table;
 	choose_forks(philo, &first, &second);
-	return (safe_mutex_unlock(&table->fork[first]) && \
-			safe_mutex_unlock(&table->fork[second]));
+	return (safe_mutex_unlock(&table->fork[first], "release_forks") && \
+			safe_mutex_unlock(&table->fork[second], "release_forks"));
 }
 
 bool	release_forks_quit(t_philo *philo)
