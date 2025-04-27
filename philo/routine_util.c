@@ -5,87 +5,59 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/02 10:35:45 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/22 22:57:08 by cwon             ###   ########.fr       */
+/*   Created: 2025/04/27 20:03:25 by cwon              #+#    #+#             */
+/*   Updated: 2025/04/27 20:45:21 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-bool	grab_fork(t_philo *philo, int fork_number)
+static bool	grab_first_fork(t_philo *philo)
 {
-	t_llong	timestamp;
-	t_table	*table;
-
-	table = philo->table;
-	if (!safe_mutex_lock(&table->fork[fork_number], "grab_fork") || \
-		!get_timestamp(&timestamp, 0))
+	if (!safe_mutex_lock(philo->fork1, "grab_first_fork"))
 		return (false);
-	if (!safe_mutex_lock(&table->stop_lock, "grab_fork"))
+	if (!print_log(philo, "has taken a fork"))
 	{
-		safe_mutex_unlock(&table->fork[fork_number], "grab_fork");
+		safe_mutex_unlock(philo->fork1, "grab_first_fork");
 		return (false);
 	}
-	if (table->stop)
-	{
-		safe_mutex_unlock(&table->stop_lock, "grab_fork");
-		safe_mutex_unlock(&table->fork[fork_number], "grab_fork");
-		return (false);
-	}
-	if (!safe_mutex_unlock(&table->stop_lock, "grab_fork"))
-	{
-		safe_mutex_unlock(&table->fork[fork_number], "grab_fork");
-		return (false);
-	}
-	printf("%lld %d has picked up a fork\n", timestamp, philo->id + 1);
 	return (true);
 }
 
-bool	mealcount_check(t_philo *philo)
+static bool	grab_second_fork(t_philo *philo)
 {
-	t_table	*table;
-
-	table = philo->table;
-	philo->mealcount++;
-	if (!safe_mutex_lock(&table->mealcount_lock, "mealcount_check"))
-		return (false);
-	if (philo->mealcount == table->min_meals)
-		table->min_reached++;
-	if (table->min_reached == table->size)
-		terminate(table, philo->id, false);
-	return (safe_mutex_unlock(&table->mealcount_lock, "mealcount_check"));
-}
-
-bool	release_forks(t_philo *philo)
-{
-	int		first;
-	int		second;
-	t_table	*table;
-
-	table = philo->table;
-	choose_forks(philo, &first, &second);
-	return (safe_mutex_unlock(&table->fork[first], "release_forks") && \
-			safe_mutex_unlock(&table->fork[second], "release_forks"));
-}
-
-bool	release_forks_quit(t_philo *philo)
-{
-	release_forks(philo);
-	return (false);
-}
-
-void	choose_forks(t_philo *philo, int *first, int *second)
-{
-	int		temp;
-	t_table	*table;
-
-	table = philo->table;
-	*first = philo->id;
-	*second = (philo->id + 1) % table->size;
-	if (*first > *second)
+	if (!safe_mutex_lock(philo->fork2, "grab_second_fork"))
 	{
-		temp = *first;
-		*first = *second;
-		*second = temp;
+		safe_mutex_unlock(philo->fork1, "grab_second_fork");
+		return (false);
 	}
+	if (!print_log(philo, "has taken a fork"))
+		return (release_forks(philo, false));
+	return (true);
+}
+
+bool	grab_forks(t_philo *philo)
+{
+	return (grab_first_fork(philo) && grab_second_fork(philo));
+}
+
+bool	release_forks(t_philo *philo, bool result)
+{
+	if (!safe_mutex_unlock(philo->fork1, "release_forks"))
+		result = false;
+	if (!safe_mutex_unlock(philo->fork2, "release_forks"))
+		result = false;
+	return (result);
+}
+
+bool	update_last_meal(t_philo *philo)
+{
+	if (!safe_mutex_lock(&philo->lastmeal_lock, "philo_routine"))
+		return (false);
+	if (!get_timestamp(&philo->lastmeal))
+	{
+		safe_mutex_unlock(&philo->lastmeal_lock, "philo_routine");
+		return (false);
+	}
+	return (safe_mutex_unlock(&philo->lastmeal_lock, "philo_routine"));
 }

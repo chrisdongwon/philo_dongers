@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/02/06 09:42:54 by cwon              #+#    #+#              #
-#    Updated: 2025/04/17 17:04:19 by cwon             ###   ########.fr        #
+#    Created: 2025/04/25 22:10:18 by cwon              #+#    #+#              #
+#    Updated: 2025/04/27 20:45:49 by cwon             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,18 +15,19 @@ NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 # for race condition checking
-# CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+#CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
 
 HEADER = philo.h
 SRC = \
+	flush.c \
 	init.c \
 	mutex.c \
 	parse.c \
+	philo_util.c \
 	philo.c \
 	routine_util.c \
 	routine.c \
 	thread.c \
-	time.c \
 	watchdog.c
 MAIN = main.c
 OBJ = $(SRC:.c=.o) $(MAIN:.c=.o)

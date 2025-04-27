@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/26 14:43:05 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/22 23:30:15 by cwon             ###   ########.fr       */
+/*   Created: 2025/04/27 19:11:43 by cwon              #+#    #+#             */
+/*   Updated: 2025/04/27 20:46:50 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,76 +14,51 @@
 
 static bool	philo_eat(t_philo *philo)
 {
-	t_llong	timestamp;
 	t_table	*table;
 
 	table = philo->table;
-	if (!safe_mutex_lock(&table->stop_lock, "philo_eat"))
-		return (release_forks_quit(philo));
-	if (table->stop || !safe_mutex_unlock(&table->stop_lock, "philo_eat"))
-		return (release_forks_quit(philo));
-	if (get_timestamp(&timestamp, philo))
-		printf("%lld %d is eating\n", timestamp, philo->id + 1);
-	else
-		return (release_forks_quit(philo));
-	if ((table->min_meals && !mealcount_check(philo)) || \
-		!safe_usleep(table->eat_time, "philo_eat"))
-		return (release_forks_quit(philo));
-	return (release_forks(philo));
-}
-
-static bool	philo_forks(t_philo *philo)
-{
-	int		first;
-	int		second;
-
-	choose_forks(philo, &first, &second);
-	if (!grab_fork(philo, first))
+	if (!grab_forks(philo))
 		return (false);
-	if ((first == second) || !grab_fork(philo, second))
+	if (!print_log(philo, "is eating") || \
+		!safe_mutex_lock(&philo->lastmeal_lock, "philo_eat"))
+		return (release_forks(philo, false));
+	if (!get_timestamp(&philo->lastmeal) || \
+		!safe_mutex_lock(&table->mealcount_lock, "philo_eat"))
 	{
-		safe_mutex_unlock(&philo->table->fork[first], "philo_forks");
-		return (false);
+		safe_mutex_unlock(&philo->lastmeal_lock, "philo_eat");
+		return (release_forks(philo, false));
 	}
-	return (true);
+	philo->mealcount++;
+	if (!safe_mutex_unlock(&table->mealcount_lock, "philo_eat"))
+	{
+		safe_mutex_unlock(&philo->lastmeal_lock, "philo_eat");
+		return (release_forks(philo, false));
+	}
+	if (!safe_mutex_unlock(&philo->lastmeal_lock, "philo_eat") || \
+		!safe_usleep(table->eat_time, "philo_eat"))
+		return (release_forks(philo, false));
+	return (release_forks(philo, true));
 }
 
 static bool	philo_sleep(t_philo *philo)
 {
-	t_llong	timestamp;
-	t_table	*table;
-
-	table = philo->table;
-	if (!safe_mutex_lock(&table->stop_lock, "philo_sleep"))
-		return (false);
-	if (!get_timestamp(&timestamp, 0) || table->stop)
-	{
-		safe_mutex_unlock(&table->stop_lock, "philo_sleep");
-		return (false);
-	}
-	if (!safe_mutex_unlock(&table->stop_lock, "philo_sleep"))
-		return (false);
-	printf("%lld %d is sleeping\n", timestamp, philo->id + 1);
-	return (safe_usleep(table->sleep_time, "philo_sleep"));
+	return (print_log(philo, "is sleeping") && \
+			safe_usleep(philo->table->sleep_time, "philo_sleep"));
 }
 
 static bool	philo_think(t_philo *philo)
 {
-	t_llong	timestamp;
-	t_table	*table;
+	return (print_log(philo, "is thinking"));
+}
 
-	table = philo->table;
-	if (!safe_mutex_lock(&table->stop_lock, "philo_think"))
-		return (false);
-	if (!get_timestamp(&timestamp, 0) || table->stop)
-	{
-		safe_mutex_unlock(&table->stop_lock, "philo_think");
-		return (false);
-	}
-	if (!safe_mutex_unlock(&table->stop_lock, "philo_think"))
-		return (false);
-	printf("%lld %d is thinking\n", timestamp, philo->id + 1);
-	return (true);
+static void	*single_philo(t_philo *philo)
+{
+	print_log(philo, "is thinking");
+	if (!safe_mutex_lock(philo->table->fork, "single_philo"))
+		return (0);
+	print_log(philo, "has taken a fork");
+	safe_mutex_unlock(philo->table->fork, "single_philo");
+	return (0);
 }
 
 void	*philo_routine(void *arg)
@@ -91,8 +66,16 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (philo_think(philo) && philo_forks(philo) && philo_eat(philo) && \
-			philo_sleep(philo))
-		continue ;
+	if (!update_last_meal(philo))
+		return (0);
+	if (philo->table->size == 1)
+		return (single_philo(philo));
+	if (philo->id % 2 == 0 && !safe_usleep(1, "philo_routine"))
+		return (0);
+	while (!quit_now(philo->table))
+	{
+		if (!philo_think(philo) || !philo_eat(philo) || !philo_sleep(philo))
+			break ;
+	}
 	return (0);
 }
