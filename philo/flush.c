@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 00:01:55 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 02:30:08 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/27 21:44:16 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,6 @@ int	flush(t_table *table, bool mutex, int exit_status)
 	free(table->fork);
 	free(table->philo);
 	if (errno)
-		exit_status = EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	return (exit_status);
 }

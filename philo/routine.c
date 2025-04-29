@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:11:43 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 20:46:50 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/27 21:18:54 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (!update_last_meal(philo))
+	if (!update_lastmeal(philo))
 		return (0);
 	if (philo->table->size == 1)
 		return (single_philo(philo));

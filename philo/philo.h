@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:11:04 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 20:44:56 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/27 21:18:28 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ bool	get_timestamp(t_time *timestamp);
 bool	print_log(t_philo *philo, const char *str);
 bool	quit_now(t_table *table);
 bool	safe_usleep(int msec, const char *context);
-bool	update_last_meal(t_philo *philo);
+bool	update_lastmeal(t_philo *philo);
 
 // philo.c
 int		philosophers(int argc, char **argv);
