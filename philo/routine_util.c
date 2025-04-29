@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 20:03:25 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 21:18:39 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/29 16:43:58 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,12 @@ bool	release_forks(t_philo *philo, bool result)
 
 bool	update_lastmeal(t_philo *philo)
 {
-	if (!safe_mutex_lock(&philo->lastmeal_lock, "philo_routine"))
+	if (!safe_mutex_lock(&philo->lastmeal_lock, "update_lastmeal"))
 		return (false);
 	if (!get_timestamp(&philo->lastmeal))
 	{
-		safe_mutex_unlock(&philo->lastmeal_lock, "philo_routine");
+		safe_mutex_unlock(&philo->lastmeal_lock, "update_lastmeal");
 		return (false);
 	}
-	return (safe_mutex_unlock(&philo->lastmeal_lock, "philo_routine"));
+	return (safe_mutex_unlock(&philo->lastmeal_lock, "update_lastmeal"));
 }

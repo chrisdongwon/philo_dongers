@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 20:59:25 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 15:54:35 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/29 16:44:37 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ bool	error(const char *fn_name, const char *context)
 
 int	flush_routine(t_table *table, int exit_status)
 {
-	if (!safe_sem_close(table->forks, "flush_process"))
+	if (!safe_sem_close(table->forks, "flush_routine"))
 		exit_status = EXIT_FAILURE;
-	if (!safe_sem_close(table->lock, "flush_process"))
+	if (!safe_sem_close(table->lock, "flush_routine"))
 		exit_status = EXIT_FAILURE;
-	if (!safe_sem_close(table->quit, "flush_process"))
+	if (!safe_sem_close(table->quit, "flush_routine"))
 		exit_status = EXIT_FAILURE;
 	free(table->philo);
 	if (errno)

@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 02:41:46 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 19:43:16 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/29 16:44:22 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ static bool	starvation_detected(t_table *table)
 			if (!quit_now(table))
 			{
 				print_log(philo, "is dead");
-				if (!safe_mutex_lock(&table->stop_lock, "min_reached"))
+				if (!safe_mutex_lock(&table->stop_lock, "starvation_detected"))
 					return (true);
 				table->stop = true;
-				safe_mutex_unlock(&table->stop_lock, "min_reached");
+				safe_mutex_unlock(&table->stop_lock, "starvation_detected");
 				return (true);
 			}
 			return (true);

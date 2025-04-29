@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 13:26:17 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 16:05:15 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/29 16:45:57 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	detect_starvation(t_philo *philo, t_table *table)
 
 	if (!get_timestamp(&timestamp))
 	{
-		safe_sem_post(table->lock, "watchdog_routine");
+		safe_sem_post(table->lock, "detect_starvation");
 		end_watchdog(table, EXIT_FAILURE);
 	}
 	if (philo->alive && \
@@ -39,7 +39,7 @@ static void	detect_starvation(t_philo *philo, t_table *table)
 	{
 		philo->alive = false;
 		printf("%" PRIu64 " %d has died\n", timestamp, philo->id);
-		if (!safe_sem_post(table->lock, "watchdog_routine"))
+		if (!safe_sem_post(table->lock, "detect_starvation"))
 			end_watchdog(table, EXIT_FAILURE);
 		end_watchdog(table, EXIT_SUCCESS);
 	}

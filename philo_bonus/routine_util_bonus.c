@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 15:52:15 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 16:28:14 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/29 16:43:04 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ bool	grab_second_fork(t_philo *philo)
 
 bool	release_forks(t_philo *philo, bool result)
 {
-	if (!safe_sem_post(philo->table->forks, "grab_second_fork"))
+	if (!safe_sem_post(philo->table->forks, "release_forks"))
 		result = false;
-	if (!safe_sem_post(philo->table->forks, "grab_second_fork"))
+	if (!safe_sem_post(philo->table->forks, "release_forks"))
 		result = false;
 	return (result);
 }
@@ -65,8 +65,8 @@ bool	update_mealcount(t_philo *philo)
 	t_table	*table;
 
 	table = philo->table;
-	if (!safe_sem_wait(table->lock, "update_lastmeal"))
+	if (!safe_sem_wait(table->lock, "update_mealcount"))
 		return (false);
 	philo->mealcount++;
-	return (safe_sem_post(table->lock, "update_lastmeal"));
+	return (safe_sem_post(table->lock, "update_mealcount"));
 }

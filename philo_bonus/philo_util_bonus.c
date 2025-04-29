@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 01:01:23 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 15:55:32 by cwon             ###   ########.fr       */
+/*   Updated: 2025/04/29 16:45:19 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ bool	kill_processes(t_table *table, int n, bool result)
 	i = -1;
 	while (++i < n)
 	{
-		if (!safe_kill(table->philo[i].pid, SIGKILL, "launch_philo"))
+		if (!safe_kill(table->philo[i].pid, SIGKILL, "kill_processes"))
 			result = false;
 	}
 	i = -1;
 	while (++i < n)
 	{
-		if (!safe_waitpid(table->philo[i].pid, &status, 0, "launch_philo") || \
-			(WIFEXITED(status) && WEXITSTATUS(status)))
+		if (!safe_waitpid(table->philo[i].pid, &status, 0, \
+			"kill_processes") || (WIFEXITED(status) && WEXITSTATUS(status)))
 			result = false;
 	}
 	return (result);
