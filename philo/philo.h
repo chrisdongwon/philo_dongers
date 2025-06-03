@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:11:04 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 21:18:28 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:28:46 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	*philo_routine(void *arg);
 
 // thread.c
 bool	safe_thread_create(pthread_t *thread, t_routine routine, void *arg, \
-							const char *context);
+const char *context);
 bool	safe_thread_join(pthread_t thread, const char *context);
 
 // watchdog.c

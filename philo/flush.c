@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 00:01:55 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 21:44:16 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:29:15 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ bool	flush_mutex(t_table *table, int n, bool result)
 			result = false;
 	}
 	result = safe_mutex_destroy(&table->mealcount_lock, "flush_mutex") && \
-			result;
+result;
 	result = safe_mutex_destroy(&table->print_lock, "flush_mutex") && result;
 	return (safe_mutex_destroy(&table->stop_lock, "flush_mutex") && result);
 }

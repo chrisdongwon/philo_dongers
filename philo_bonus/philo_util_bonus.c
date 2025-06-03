@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 01:01:23 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 16:45:19 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:31:12 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ bool	kill_processes(t_table *table, int n, bool result)
 	while (++i < n)
 	{
 		if (!safe_waitpid(table->philo[i].pid, &status, 0, \
-			"kill_processes") || (WIFEXITED(status) && WEXITSTATUS(status)))
+"kill_processes") || (WIFEXITED(status) && WEXITSTATUS(status)))
 			result = false;
 	}
 	return (result);
@@ -48,10 +48,10 @@ bool	print_log(t_philo *philo, const char *str)
 	t_time	timestamp;
 
 	if (!safe_sem_wait(philo->table->lock, "print_log") || \
-		!get_timestamp(&timestamp))
+!get_timestamp(&timestamp))
 		return (false);
 	if (philo->alive && \
-		(printf("%" PRIu64 " %d %s\n", timestamp, philo->id, str) <= 0))
+(printf("%" PRIu64 " %d %s\n", timestamp, philo->id, str) <= 0))
 	{
 		safe_sem_post(philo->table->lock, "print_log");
 		return (false);

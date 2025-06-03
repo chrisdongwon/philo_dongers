@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 02:41:46 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 16:44:22 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:28:37 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static bool	exceeded_death_time(t_philo *philo)
 	if (!safe_mutex_lock(&philo->lastmeal_lock, "exceeded_death_time"))
 		return (true);
 	if (!get_timestamp(&timestamp) || \
-		((int)(timestamp - philo->lastmeal) > philo->table->death_time))
+((int)(timestamp - philo->lastmeal) > philo->table->death_time))
 	{
 		safe_mutex_unlock(&philo->lastmeal_lock, "exceeded_death_time");
 		return (true);

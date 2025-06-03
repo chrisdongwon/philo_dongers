@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:11:43 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 21:18:54 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:29:44 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ static bool	philo_eat(t_philo *philo)
 	if (!grab_forks(philo))
 		return (false);
 	if (!print_log(philo, "is eating") || \
-		!safe_mutex_lock(&philo->lastmeal_lock, "philo_eat"))
+!safe_mutex_lock(&philo->lastmeal_lock, "philo_eat"))
 		return (release_forks(philo, false));
 	if (!get_timestamp(&philo->lastmeal) || \
-		!safe_mutex_lock(&table->mealcount_lock, "philo_eat"))
+!safe_mutex_lock(&table->mealcount_lock, "philo_eat"))
 	{
 		safe_mutex_unlock(&philo->lastmeal_lock, "philo_eat");
 		return (release_forks(philo, false));
@@ -35,7 +35,7 @@ static bool	philo_eat(t_philo *philo)
 		return (release_forks(philo, false));
 	}
 	if (!safe_mutex_unlock(&philo->lastmeal_lock, "philo_eat") || \
-		!safe_usleep(table->eat_time, "philo_eat"))
+!safe_usleep(table->eat_time, "philo_eat"))
 		return (release_forks(philo, false));
 	return (release_forks(philo, true));
 }
@@ -43,7 +43,7 @@ static bool	philo_eat(t_philo *philo)
 static bool	philo_sleep(t_philo *philo)
 {
 	return (print_log(philo, "is sleeping") && \
-			safe_usleep(philo->table->sleep_time, "philo_sleep"));
+safe_usleep(philo->table->sleep_time, "philo_sleep"));
 }
 
 static bool	philo_think(t_philo *philo)

@@ -6,26 +6,47 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 23:11:51 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 20:25:06 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:30:04 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+// static void	choose_forks(t_philo *philo)
+// {
+// 	t_mutex	*temp;
+// 	t_table	*table;
+
+// 	table = philo->table;
+// 	philo->fork1 = &table->fork[(philo->id - 1) % table->size];
+// 	philo->fork2 = &table->fork[(philo->id) % table->size];
+
+// 	if (philo->id % 2 == 0)
+// 	{
+// 		temp = philo->fork1;
+// 		philo->fork1 = philo->fork2;
+// 		philo->fork2 = temp;
+// 	}
+// }
+
 static void	choose_forks(t_philo *philo)
 {
-	t_mutex	*temp;
+	int		i;
+	int		j;
+	int		temp;
 	t_table	*table;
 
 	table = philo->table;
-	philo->fork1 = &table->fork[(philo->id - 1) % table->size];
-	philo->fork2 = &table->fork[(philo->id) % table->size];
-	if (philo->id % 2 == 0)
+	i = (philo->id - 1) % table->size;
+	j = (philo->id) % table->size;
+	if (j < i)
 	{
-		temp = philo->fork1;
-		philo->fork1 = philo->fork2;
-		philo->fork2 = temp;
+		temp = i;
+		i = j;
+		j = temp;
 	}
+	philo->fork1 = &table->fork[i];
+	philo->fork2 = &table->fork[j];
 }
 
 bool	init_mutex(t_table *table)
@@ -68,7 +89,7 @@ bool	init_philo(t_table *table)
 		philo->table = table;
 		choose_forks(philo);
 		if (!get_timestamp(&philo->lastmeal) || \
-			!safe_mutex_init(&philo->lastmeal_lock, "init_philo"))
+!safe_mutex_init(&philo->lastmeal_lock, "init_philo"))
 			return (flush_philo(table, i, false));
 	}
 	return (true);

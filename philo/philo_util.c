@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 02:00:37 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 19:43:37 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:28:58 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ bool	print_log(t_philo *philo, const char *str)
 	if (!philo->table->stop)
 	{
 		if (!get_timestamp(&timestamp) || \
-		(printf("%" PRIu64 " %d %s\n", timestamp, philo->id, str) <= 0))
+(printf("%" PRIu64 " %d %s\n", timestamp, philo->id, str) <= 0))
 		{
 			safe_mutex_unlock(&philo->table->stop_lock, "print_log");
 			safe_mutex_unlock(&philo->table->print_lock, "print_log");
@@ -46,7 +46,7 @@ bool	print_log(t_philo *philo, const char *str)
 	}
 	result = safe_mutex_unlock(&philo->table->stop_lock, "print_log");
 	return (safe_mutex_unlock(&philo->table->print_lock, "print_log") && \
-			result);
+result);
 }
 
 bool	quit_now(t_table *table)

@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 20:59:43 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/29 16:27:48 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:31:28 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ bool	safe_sem_wait(sem_t	*sem, const char *context);
 
 // thread_bonus.c
 bool	safe_thread_create(pthread_t *thread, t_routine routine, void *arg, \
-							const char *context);
+const char *context);
 bool	safe_thread_detach(pthread_t thread, const char *context);
 
 // watchdog_bonus.c

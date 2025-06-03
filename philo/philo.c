@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 22:34:00 by cwon              #+#    #+#             */
-/*   Updated: 2025/04/27 20:47:05 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:28:16 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ static bool	launch_philo(t_table *table)
 	int	i;
 
 	if (!safe_thread_create(&table->watchdog, watchdog_routine, table, \
-							"launch_philo"))
+"launch_philo"))
 		return (false);
 	i = -1;
 	while (++i < table->size)
 	{
 		if (!safe_thread_create(&table->philo[i].thread, philo_routine, \
-								&table->philo[i], "launch_philo"))
+&table->philo[i], "launch_philo"))
 		{
 			join_threads(table, i, false);
 			safe_thread_join(table->watchdog, "launch_philo");
