@@ -6,7 +6,7 @@
 /*   By: cwon <cwon@student.42bangkok.com>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:11:43 by cwon              #+#    #+#             */
-/*   Updated: 2025/06/03 16:29:44 by cwon             ###   ########.fr       */
+/*   Updated: 2025/06/03 16:49:24 by cwon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ void	*philo_routine(void *arg)
 		return (0);
 	if (philo->table->size == 1)
 		return (single_philo(philo));
-	if (philo->id % 2 == 0 && !safe_usleep(1, "philo_routine"))
-		return (0);
 	while (!quit_now(philo->table))
 	{
 		if (!philo_think(philo) || !philo_eat(philo) || !philo_sleep(philo))
